@@ -20,6 +20,7 @@ import static com.android.launcher3.folder.ClippedFolderIconLayoutRule.MAX_NUM_I
 
 import android.graphics.Point;
 
+import com.android.launcher3.DeviceProfile;
 import com.android.launcher3.InvariantDeviceProfile;
 import com.android.launcher3.model.data.FolderInfo;
 import com.android.launcher3.model.data.ItemInfo;
@@ -189,7 +190,7 @@ public class FolderGridOrganizer {
         if (page > 0 || mDisplayingUpperLeftQuadrant) {
             int col = rank % mCountX;
             int row = rank / mCountX;
-            return col < 2 && row < 2;
+            return col < DeviceProfile.FOLDER_PREVIEW_ROW_COLUMN && row < DeviceProfile.FOLDER_PREVIEW_ROW_COLUMN;
         }
         return rank < MAX_NUM_ITEMS_IN_PREVIEW;
     }

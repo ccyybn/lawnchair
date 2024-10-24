@@ -96,6 +96,8 @@ public class DeviceProfile {
     public static final ViewScaleProvider DEFAULT_PROVIDER = itemInfo -> DEFAULT_SCALE;
     public static final Consumer<DeviceProfile> DEFAULT_DIMENSION_PROVIDER = dp -> {
     };
+    
+    public static final int FOLDER_PREVIEW_ROW_COLUMN = 2;
 
     public final InvariantDeviceProfile inv;
     private final Info mInfo;
@@ -1454,7 +1456,7 @@ public class DeviceProfile {
             allAppsLeftRightMargin = Math.max(1, (availableWidthPx - usedWidth) / 2);
         } else if (!mIsResponsiveGrid) {
             allAppsPadding.left = allAppsPadding.right =
-                    Math.max(0, desiredWorkspaceHorizontalMarginPx + cellLayoutHorizontalPadding
+                    Math.max(0, 31 + cellLayoutHorizontalPadding
                             - (allAppsBorderSpacePx.x / 2));
         }
         var allAppLeftRightMarginMultiplier = PreferenceExtensionsKt

@@ -301,10 +301,10 @@ open class IconShape(
         IconCornerShape.arc,
         IconCornerShape.arc,
         IconCornerShape.arc,
-        .6f,
-        .6f,
-        .6f,
-        .6f,
+        .5f,
+        .5f,
+        .5f,
+        .5f,
     ) {
 
         override val windowTransitionRadius = .6f
