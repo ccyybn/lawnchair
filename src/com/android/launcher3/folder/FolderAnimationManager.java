@@ -366,6 +366,10 @@ public class FolderAnimationManager {
 
         TimeInterpolator previewItemInterpolator = getPreviewItemInterpolator();
 
+        Animator translationFolderX = getAnimator(mFolder.mContent, View.TRANSLATION_X, 50, 0f);
+        translationFolderX.setInterpolator(previewItemInterpolator);
+        play(animatorSet, translationFolderX);
+
         ShortcutAndWidgetContainer cwc = mContent.getPageAt(0).getShortcutsAndWidgets();
         for (int i = 0; i < numItemsInPreview; ++i) {
             final BubbleTextView btv = itemsInPreview.get(i);
@@ -396,9 +400,9 @@ public class FolderAnimationManager {
                     (int) ((mTmpParams.transX - iconOffsetX + previewItemOffsetX) / folderScale);
             final float paddingTop = btv.getPaddingTop() * iconScale;
             final int previewPosY = (int) ((mTmpParams.transY + previewItemOffsetY - paddingTop)
-                    / folderScale);
+                / folderScale);
 
-            final float xDistance = previewPosX - btvLp.x;
+            final float xDistance = previewPosX - btvLp.x - 150;
             final float yDistance = previewPosY - btvLp.y;
 
             Animator translationX = getAnimator(btv, View.TRANSLATION_X, xDistance, 0f);
@@ -463,7 +467,8 @@ public class FolderAnimationManager {
     }
 
     private boolean isLargeFolder() {
-        return mFolder.getItemCount() > MAX_NUM_ITEMS_IN_PREVIEW;
+        return false;
+//        return mFolder.getItemCount() > MAX_NUM_ITEMS_IN_PREVIEW;
     }
 
     private TimeInterpolator getPreviewItemInterpolator() {

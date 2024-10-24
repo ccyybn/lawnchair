@@ -389,15 +389,19 @@ public class PreviewBackground extends CellLayout.DelegatedCellDrawing {
         mScale = originalScale;
     }
 
-    public Path getClipPath() {
+    public Path getClipPath(float factor) {
         mPath.reset();
-        float radius = getScaledRadius() * ICON_OVERLAP_FACTOR;
+        float radius = getScaledRadius() * factor;
         // Find the difference in radius so that the clip path remains centered.
         float radiusDifference = radius - getRadius();
         float offsetX = basePreviewOffsetX - radiusDifference;
         float offsetY = basePreviewOffsetY - radiusDifference;
         getShape().addToPath(mPath, offsetX, offsetY, radius);
         return mPath;
+    }
+
+    public Path getClipPath() {
+        return getClipPath(ICON_OVERLAP_FACTOR);
     }
 
     private void delegateDrawing(CellLayout delegate, int cellX, int cellY) {
