@@ -1,8 +1,10 @@
 package com.android.launcher3.folder;
 
+import com.android.launcher3.DeviceProfile;
+
 public class ClippedFolderIconLayoutRule {
 
-    public static final int MAX_NUM_ITEMS_IN_PREVIEW = 4;
+    public static final int MAX_NUM_ITEMS_IN_PREVIEW = DeviceProfile.FOLDER_PREVIEW_ROW_COLUMN * DeviceProfile.FOLDER_PREVIEW_ROW_COLUMN;
     private static final int MIN_NUM_ITEMS_IN_PREVIEW = 2;
 
     private static final float MIN_SCALE = 0.44f;
@@ -32,7 +34,7 @@ public class ClippedFolderIconLayoutRule {
     }
 
     public PreviewItemDrawingParams computePreviewItemDrawingParams(int index, int curNumItems,
-            PreviewItemDrawingParams params) {
+                                                                    PreviewItemDrawingParams params) {
         float totalScale = scaleForItem(curNumItems);
         float transX;
         float transY;
@@ -66,9 +68,9 @@ public class ClippedFolderIconLayoutRule {
     /**
      * Builds a grid based on the positioning of the items when there are
      * {@link #MAX_NUM_ITEMS_IN_PREVIEW} in the preview.
-     *
+     * <p>
      * Positions in the grid: 0 1  // 0 is row 0, col 1
-     *                        2 3  // 3 is row 1, col 1
+     * 2 3  // 3 is row 1, col 1
      */
     private void getGridPosition(int row, int col, float[] result) {
         // We use position 0 and 3 to calculate the x and y distances between items.
@@ -76,7 +78,7 @@ public class ClippedFolderIconLayoutRule {
         float left = result[0];
         float top = result[1];
 
-        getPosition(3, 4, result);
+        getPosition(DeviceProfile.FOLDER_PREVIEW_ROW_COLUMN + 1, 4, result);
         float dx = result[0] - left;
         float dy = result[1] - top;
 
@@ -85,57 +87,17 @@ public class ClippedFolderIconLayoutRule {
     }
 
     private void getPosition(int index, int curNumItems, float[] result) {
-        // The case of two items is homomorphic to the case of one.
-        curNumItems = Math.max(curNumItems, 2);
-
-        // We model the preview as a circle of items starting in the appropriate piece of the
-        // upper left quadrant (to achieve horizontal and vertical symmetry).
-        double theta0 = mIsRtl ? 0 : Math.PI;
-
-        // In RTL we go counterclockwise
-        int direction = mIsRtl ? 1 : -1;
-
-        double thetaShift = 0;
-        if (curNumItems == 3) {
-            thetaShift = Math.PI / 2;
-        } else if (curNumItems == 4) {
-            thetaShift = Math.PI / 4;
-        }
-        theta0 += direction * thetaShift;
-
-        // We want the items to appear in reading order. For the case of 1, 2 and 3 items, this
-        // is natural for the circular model. With 4 items, however, we need to swap the 3rd and
-        // 4th indices to achieve reading order.
-        if (curNumItems == 4 && index == 3) {
-            index = 2;
-        } else if (curNumItems == 4 && index == 2) {
-            index = 3;
-        }
-
-        // We bump the radius up between 0 and MAX_RADIUS_DILATION % as the number of items increase
-        float radius = mRadius * (1 + MAX_RADIUS_DILATION * (curNumItems -
-                MIN_NUM_ITEMS_IN_PREVIEW) / (MAX_NUM_ITEMS_IN_PREVIEW - MIN_NUM_ITEMS_IN_PREVIEW));
-        double theta = theta0 + index * (2 * Math.PI / curNumItems) * direction;
-
-        float halfIconSize = (mIconSize * scaleForItem(curNumItems)) / 2;
-
-        // Map the location along the circle, and offset the coordinates to represent the center
-        // of the icon, and to be based from the top / left of the preview area. The y component
-        // is inverted to match the coordinate system.
-        result[0] = mAvailableSpace / 2 + (float) (radius * Math.cos(theta) / 2) - halfIconSize;
-        result[1] = mAvailableSpace / 2 + (float) (- radius * Math.sin(theta) / 2) - halfIconSize;
-
+        int row = index / DeviceProfile.FOLDER_PREVIEW_ROW_COLUMN;
+        int column = index % DeviceProfile.FOLDER_PREVIEW_ROW_COLUMN;
+        float iconSize = mIconSize * scaleForItem(curNumItems);
+        float padding = mAvailableSpace * 0.13f;
+        float gap = (mAvailableSpace - padding * 2 - iconSize * DeviceProfile.FOLDER_PREVIEW_ROW_COLUMN) / (DeviceProfile.FOLDER_PREVIEW_ROW_COLUMN - 1);
+        result[0] = padding + column * (gap + iconSize);
+        result[1] = padding + row * (gap + iconSize);
     }
 
     public float scaleForItem(int numItems) {
-        // Scale is determined by the number of items in the preview.
-        final float scale;
-        if (numItems <= 3) {
-            scale = MAX_SCALE;
-        } else {
-            scale = MIN_SCALE;
-        }
-        return scale * mBaselineIconScale;
+        return 0.23f * mAvailableSpace / 240 * 3 / DeviceProfile.FOLDER_PREVIEW_ROW_COLUMN;
     }
 
     public float getIconSize() {
