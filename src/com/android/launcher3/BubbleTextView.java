@@ -214,13 +214,13 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
         final int defaultIconSize;
         if (mDisplay == DISPLAY_WORKSPACE) {
             setTextSize(TypedValue.COMPLEX_UNIT_PX, grid.iconTextSizePx);
-            setCompoundDrawablePadding(grid.iconDrawablePaddingPx);
+            setCompoundDrawablePadding(0);
             defaultIconSize = grid.iconSizePx;
             setCenterVertically(grid.iconCenterVertically);
         } else if (mDisplay == DISPLAY_ALL_APPS || mDisplay == DISPLAY_PREDICTION_ROW
                 || mDisplay == DISPLAY_SEARCH_RESULT_APP_ROW) {
             setTextSize(TypedValue.COMPLEX_UNIT_PX, grid.allAppsIconTextSizePx);
-            setCompoundDrawablePadding(grid.allAppsIconDrawablePaddingPx);
+            setCompoundDrawablePadding(0);
             defaultIconSize = grid.allAppsIconSizePx;
             LawnchairUtilsKt.overrideAllAppsTextColor(this);
         } else if (mDisplay == DISPLAY_FOLDER) {
