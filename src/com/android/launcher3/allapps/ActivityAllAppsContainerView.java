@@ -771,19 +771,18 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         if (mSearchUiManager.getEditText() == null) {
             return;
         }
-
-        boolean bgVisible = mSearchUiManager.getBackgroundVisibility();
-        if (!isSearching()) {
-            bgVisible = true;
-        } else {
-            bgVisible = false;
-        }
-        mSearchUiManager.setBackgroundVisibility(bgVisible, 1);
+//        boolean bgVisible = mSearchUiManager.getBackgroundVisibility();
+//        if (!isSearching()) {
+//            bgVisible = true;
+//        } else {
+//            bgVisible = false;
+//        }
+//        mSearchUiManager.setBackgroundVisibility(bgVisible, 1);
     }
 
     protected int getHeaderColor(float blendRatio) {
         return ColorUtils.setAlphaComponent(
-                ColorUtils.blendARGB(mScrimColor, mHeaderProtectionColor, blendRatio),
+                ColorUtils.blendARGB(mScrimColor, mHeaderProtectionColor, 0),
                 (int) (mSearchContainer.getAlpha() * 255));
     }
 
@@ -1536,8 +1535,13 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                 if (isSearchBarFloating()) {
                     bottomOffset += mSearchContainer.getHeight();
                 }
-                mRecyclerView.setPadding(mPadding.left, mPadding.top, mPadding.right,
+                if (mType == SEARCH) {
+                    mRecyclerView.setPadding(mPadding.left, (int) (mPadding.top * 1.2), mPadding.right,
                         mPadding.bottom + bottomOffset);
+                } else {
+                    mRecyclerView.setPadding(mPadding.left, mPadding.top, mPadding.right,
+                        mPadding.bottom + bottomOffset);
+                }
             }
         }
 

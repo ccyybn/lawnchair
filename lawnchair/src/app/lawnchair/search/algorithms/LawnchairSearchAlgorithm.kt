@@ -91,7 +91,7 @@ sealed class LawnchairSearchAlgorithm(
             ) {
                 SearchAdapterItem.createAdapterItem(target, getGroupedBackground(index, appAndShortcutIndices))
             } else if (target.layoutType == ICON_SINGLE_VERTICAL_TEXT && target.extras.getBoolean(EXTRA_QUICK_LAUNCH, false)) {
-                SearchAdapterItem.createAdapterItem(target, normalBackground)
+                SearchAdapterItem.createAdapterItem(target, iconBackground)
             } else {
                 val background = getBackground(
                     target.layoutType,

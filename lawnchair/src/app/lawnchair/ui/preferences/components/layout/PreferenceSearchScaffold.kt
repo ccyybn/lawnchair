@@ -92,7 +92,7 @@ private fun SearchBar(
             .padding(top = 8.dp)
             .padding(horizontal = 16.dp)
             .fillMaxWidth()
-            .height(56.dp)
+            .height(42.dp)
             .background(
                 color = MaterialTheme.colorScheme.surfaceContainerHighest,
                 shape = RoundedCornerShape(100),
