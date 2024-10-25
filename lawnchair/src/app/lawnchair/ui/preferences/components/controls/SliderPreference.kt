@@ -103,7 +103,7 @@ fun SliderPreference(
                 CompositionLocalProvider(
                     LocalContentColor provides MaterialTheme.colorScheme.onBackground,
                 ) {
-                    val value = snapSliderValue(valueRange.start, sliderValue, step)
+                    val value = snapSliderValue(valueRange.start, sliderValue, if (showAsPercentage) 0.01f else step)
                     Text(
                         text = if (showAsPercentage) {
                             stringResource(
@@ -124,7 +124,7 @@ fun SliderPreference(
                 onValueChange = { newValue -> sliderValue = newValue },
                 onValueChangeFinished = { adapterValue = sliderValue },
                 valueRange = valueRange,
-                steps = getSteps(valueRange, step),
+                steps = if (showAsPercentage) 0 else getSteps(valueRange, step),
                 modifier = Modifier
                     .padding(top = 2.dp, bottom = 12.dp)
                     .padding(horizontal = 10.dp)
