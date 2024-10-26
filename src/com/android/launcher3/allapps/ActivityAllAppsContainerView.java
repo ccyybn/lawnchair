@@ -15,6 +15,7 @@
  */
 package com.android.launcher3.allapps;
 
+import static com.android.launcher3.allapps.ActivityAllAppsContainerView.AdapterHolder.MAIN;
 import static com.android.launcher3.allapps.ActivityAllAppsContainerView.AdapterHolder.SEARCH;
 import static com.android.launcher3.allapps.BaseAllAppsAdapter.VIEW_TYPE_WORK_DISABLED_CARD;
 import static com.android.launcher3.allapps.BaseAllAppsAdapter.VIEW_TYPE_WORK_EDU_CARD;
@@ -25,7 +26,6 @@ import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCH
 import static com.android.launcher3.logging.StatsLogManager.LauncherEvent.LAUNCHER_ALLAPPS_TAP_ON_WORK_TAB;
 import static com.android.launcher3.util.Executors.MAIN_EXECUTOR;
 import static com.android.launcher3.util.ScrollableLayoutManager.PREDICTIVE_BACK_MIN_SCALE;
-import static com.topjohnwu.superuser.internal.Utils.context;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -1201,6 +1201,10 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
                     mNavBarScrimPaint);
         }
     }
+    
+    public void onSwipeUpCompleted(){
+        mAH.get(MAIN).mRecyclerView.onSwipeUpCompleted();
+    }
 
     protected void updateSearchResultsVisibility() {
         if (isSearching()) {
@@ -1510,6 +1514,7 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
         void setup(@NonNull View rv, @Nullable Predicate<ItemInfo> matcher) {
             mAppsList.updateItemFilter(matcher);
             mRecyclerView = (AllAppsRecyclerView) rv;
+            mRecyclerView.mSearchContainer = mSearchContainer;
             mRecyclerView.bindFastScrollbar(mFastScroller);
             mRecyclerView.setEdgeEffectFactory(createEdgeEffectFactory());
             mRecyclerView.setApps(mAppsList);

@@ -95,6 +95,8 @@ public abstract class BaseAllAppsAdapter<T extends Context & ActivityContext> ex
         public int rowAppIndex;
         // The associated ItemInfoWithIcon for the item
         public AppInfo itemInfo = new AppInfo ();
+        
+        public ViewHolder viewHolder;
 
         public AdapterItem(int viewType) {
             this.viewType = viewType;
@@ -219,9 +221,10 @@ public abstract class BaseAllAppsAdapter<T extends Context & ActivityContext> ex
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        AdapterItem adapterItem = mApps.getAdapterItems().get(position);
+        adapterItem.viewHolder = holder;
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_ICON: {
-                AdapterItem adapterItem = mApps.getAdapterItems().get(position);
                 BubbleTextView icon = (BubbleTextView) holder.itemView;
                 icon.reset();
                 icon.applyFromApplicationInfo(adapterItem.itemInfo);

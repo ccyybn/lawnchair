@@ -1212,4 +1212,9 @@ public class BubbleTextView extends TextView implements ItemInfoUpdateReceiver,
     public boolean canShowLongPressPopup() {
         return getTag() instanceof ItemInfo && ShortcutUtil.supportsShortcuts((ItemInfo) getTag());
     }
+
+    @Override
+    public boolean hasOverlappingRendering() {
+        return false;
+    }
 }

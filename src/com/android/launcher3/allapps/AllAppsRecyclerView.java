@@ -33,8 +33,12 @@ import static com.android.launcher3.util.LogConfig.SEARCH_LOGGING;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -46,8 +50,11 @@ import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
 import com.android.launcher3.logging.StatsLogManager;
 import com.android.launcher3.views.ActivityContext;
+import com.patrykmichalik.opto.core.PreferenceExtensionsKt;
 
 import java.util.List;
+
+import app.lawnchair.preferences2.PreferenceManager2;
 
 /**
  * A RecyclerView with custom fast scroll support for the all apps view.
@@ -62,6 +69,15 @@ public class AllAppsRecyclerView extends FastScrollRecyclerView {
     private int mCumulativeVerticalScroll;
 
     public AlphabeticalAppsList<?> mApps;
+
+    public View mSearchContainer;
+
+    private int mBaseline;
+    private int mReverseAt;
+    private int mFadeStartAt;
+    private int mFadeEndAt;
+    private int mFadeDistance;
+    private final boolean hideAppDrawerSearchBar;
 
     public AllAppsRecyclerView(Context context) {
         this(context, null);
@@ -80,6 +96,8 @@ public class AllAppsRecyclerView extends FastScrollRecyclerView {
         super(context, attrs, defStyleAttr);
         mNumAppsPerRow = LauncherAppState.getIDP(context).numColumns;
         mFastScrollHelper = new AllAppsFastScrollHelper(this);
+        PreferenceManager2 pref2 = PreferenceManager2.getInstance(context);
+        hideAppDrawerSearchBar = PreferenceExtensionsKt.firstBlocking(pref2.getHideAppDrawerSearchBar());
     }
 
     /**
@@ -133,6 +151,11 @@ public class AllAppsRecyclerView extends FastScrollRecyclerView {
     public void onSearchResultsChanged() {
         // Always scroll the view to the top so the user can see the changed results
         scrollToTop();
+        measureFadeParameters();
+    }
+
+    public void onSwipeUpCompleted() {
+        measureFadeParameters();
     }
 
     @Override
@@ -156,10 +179,61 @@ public class AllAppsRecyclerView extends FastScrollRecyclerView {
         }
     }
 
+    private void measureFadeParameters() {
+        if (hideAppDrawerSearchBar) return;
+        final Rect searchBarPosition = new Rect();
+
+        List<BaseAllAppsAdapter.AdapterItem> items = mApps.getAdapterItems();
+        if (items.isEmpty() || items.get(0).viewHolder == null || !(items.get(0).viewHolder.itemView instanceof TextView measureView)) return;
+
+        View mSearchBar = mSearchContainer.findViewById(R.id.search_wrapper);
+        mSearchBar.getGlobalVisibleRect(searchBarPosition);
+        if (searchBarPosition.top <= 0) return;
+
+        mBaseline = measureView.getBaseline();
+        if (mBaseline == -1) return;
+        Paint textPaint = measureView.getPaint();
+        String s = "Lyg";
+        Rect bounds = new Rect();
+        textPaint.getTextBounds(s, 0, s.length(), bounds);
+        int textHeight = bounds.bottom - bounds.top;
+
+        mReverseAt = searchBarPosition.top;
+        mFadeEndAt = (searchBarPosition.bottom + searchBarPosition.top) / 2 + textHeight;
+        mFadeStartAt = Math.max(searchBarPosition.bottom, mFadeEndAt + 30);
+        mFadeDistance = mFadeStartAt - mFadeEndAt;
+    }
+
     @Override
     public void onScrolled(int dx, int dy) {
         super.onScrolled(dx, dy);
         mCumulativeVerticalScroll += dy;
+        fadeIconLabel();
+    }
+
+    public void fadeIconLabel() {
+        if (hideAppDrawerSearchBar) return;
+
+        if (mBaseline <= 0) {
+            measureFadeParameters();
+            if (mBaseline <= 0) return;
+        }
+
+        List<BaseAllAppsAdapter.AdapterItem> items = mApps.getAdapterItems();
+        for (int i = 0; i < items.size(); i++) {
+            BaseAllAppsAdapter.AdapterItem item = items.get(i);
+            if (item.viewHolder != null && item.viewHolder.itemView instanceof TextView view) {
+                final Rect position = new Rect();
+                view.getGlobalVisibleRect(position);
+                int labelY = position.bottom - view.getHeight() + mBaseline;
+                if (labelY < mFadeStartAt && labelY > mReverseAt) {
+                    float alpha = (float) Math.max(0, (labelY - mFadeEndAt)) / mFadeDistance;
+                    view.setAlpha(alpha);
+                } else {
+                    view.setAlpha(1f);
+                }
+            }
+        }
     }
 
     /**

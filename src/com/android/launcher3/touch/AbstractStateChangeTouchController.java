@@ -342,7 +342,10 @@ public abstract class AbstractStateChangeTouchController
                         Math.min(progress, 1) - endProgress) * durationMultiplier;
             }
         }
-        mCurrentAnimation.setEndAction(() -> onSwipeInteractionCompleted(targetState));
+        mCurrentAnimation.setEndAction(() -> {
+            onSwipeInteractionCompleted(targetState);
+            if (targetState == ALL_APPS) mLauncher.getAppsView().onSwipeUpCompleted();
+        });
         ValueAnimator anim = mCurrentAnimation.getAnimationPlayer();
         anim.setFloatValues(startProgress, endProgress);
         updateSwipeCompleteAnimation(anim, duration, targetState, velocity, fling);
