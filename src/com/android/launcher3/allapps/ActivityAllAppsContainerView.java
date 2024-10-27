@@ -738,7 +738,11 @@ public class ActivityAllAppsContainerView<T extends Context & ActivityContext>
 
         int padding = mHeader.getMaxTranslation();
         mAH.forEach(adapterHolder -> {
-            adapterHolder.mPadding.top = padding;
+            if (adapterHolder.mType == SEARCH) {
+                adapterHolder.mPadding.top = (int) (padding * 0.8f);
+            } else {
+                adapterHolder.mPadding.top = padding;
+            }
             adapterHolder.applyPadding();
             if (adapterHolder.mRecyclerView != null) {
                 adapterHolder.mRecyclerView.scrollToTop();

@@ -19,6 +19,7 @@ import com.android.launcher3.BubbleTextView
 import com.android.launcher3.LauncherAppState
 import com.android.launcher3.LauncherSettings
 import com.android.launcher3.R
+import com.android.launcher3.config.FeatureFlags
 import com.android.launcher3.icons.BitmapInfo
 import com.android.launcher3.icons.IconProvider
 import com.android.launcher3.icons.LauncherIcons
@@ -53,7 +54,7 @@ class SearchResultIcon(context: Context, attrs: AttributeSet?) :
         setOnLongClickListener(this)
         layoutParams = ViewGroup.LayoutParams(
             ViewGroup.LayoutParams.MATCH_PARENT,
-            launcher.deviceProfile.allAppsCellHeightPx,
+            (launcher.deviceProfile.allAppsCellHeightPx * if (FeatureFlags.twoLineAllApps(context)) 1.185f else 1f).toInt(),
         )
     }
 
