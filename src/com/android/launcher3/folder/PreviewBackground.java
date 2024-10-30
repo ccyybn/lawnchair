@@ -39,6 +39,8 @@ import android.graphics.RadialGradient;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.graphics.Shader;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Property;
 import android.view.View;
 import android.view.animation.Interpolator;
@@ -98,6 +100,7 @@ public class PreviewBackground extends CellLayout.DelegatedCellDrawing {
     int basePreviewOffsetY;
 
     private CellLayout mDrawingDelegate;
+    private boolean isPreviousOpaque = false;
 
     // When the PreviewBackground is drawn under an icon (for creating a folder) the
     // border
@@ -275,11 +278,18 @@ public class PreviewBackground extends CellLayout.DelegatedCellDrawing {
     }
 
     public void drawBackground(Canvas canvas) {
-        mPaint.setStyle(Paint.Style.FILL);
-        mPaint.setColor(getBgColor());
+        boolean isDraw = canvas.isOpaque() || !isPreviousOpaque;
+        if (isDraw) {
+            mPaint.setStyle(Paint.Style.FILL);
+            mPaint.setColor(getBgColor());
 
-        getShape().drawShape(canvas, getOffsetX(), getOffsetY(), getScaledRadius(), mPaint);
-        drawShadow(canvas);
+            getShape().drawShape(canvas, getOffsetX(), getOffsetY(), getScaledRadius(), mPaint);
+            drawShadow(canvas);
+        } else {
+            final Handler handler = new Handler(Looper.getMainLooper());
+            handler.postDelayed(this::invalidate, 10);
+        }
+        isPreviousOpaque = canvas.isOpaque();
     }
 
     public void drawShadow(Canvas canvas) {
