@@ -896,7 +896,7 @@ public class Folder extends AbstractFloatingView implements ClipPathView, DragSo
                 mFolderIcon.animateBgShadowAndStroke();
                 mFolderIcon.onFolderClose(mContent.getCurrentPage());
                 if (mFolderIcon.hasDot()) {
-                    mFolderIcon.animateDotScale(0f, 1f);
+                    mFolderIcon.animateDotScale(0f, FolderIcon.DOT_SCALE);
                 }
                 mFolderIcon.requestFocus();
             }

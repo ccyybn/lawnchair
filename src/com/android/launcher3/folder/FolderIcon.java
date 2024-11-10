@@ -31,6 +31,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
@@ -140,6 +141,7 @@ public class FolderIcon extends FrameLayout implements FolderListener, IconLabel
     private Rect mTouchArea = new Rect();
 
     private float mScaleForReorderBounce = 1f;
+    public static float DOT_SCALE = 0.7f;
 
     private static final Property<FolderIcon, Float> DOT_SCALE_PROPERTY = new Property<FolderIcon, Float>(Float.TYPE,
             "dotScale") {
@@ -518,7 +520,7 @@ public class FolderIcon extends FrameLayout implements FolderListener, IconLabel
         if (forceHideDot) {
             invalidate();
         } else if (hasDot()) {
-            animateDotScale(0, 1);
+            animateDotScale(0, DOT_SCALE);
         }
     }
 
@@ -527,7 +529,7 @@ public class FolderIcon extends FrameLayout implements FolderListener, IconLabel
      * (the dot is being added or removed).
      */
     private void updateDotScale(boolean wasDotted, boolean isDotted) {
-        float newDotScale = isDotted ? 1f : 0f;
+        float newDotScale = isDotted ? DOT_SCALE : 0f;
         // Animate when a dot is first added or when it is removed.
         if ((wasDotted ^ isDotted) && isShown()) {
             animateDotScale(newDotScale);
@@ -640,7 +642,8 @@ public class FolderIcon extends FrameLayout implements FolderListener, IconLabel
 
             // If we are animating to the accepting state, animate the dot out.
             mDotParams.scale = Math.max(0, mDotScale - mBackground.getAcceptScaleProgress());
-            mDotParams.color = mBackground.getDotColor();
+            int color = mBackground.getBgColor();
+            mDotParams.color = Color.argb(Math.min((int) (Color.alpha(color) * 1.5), 255), Color.red(color), Color.green(color), Color.blue(color));
             mDotRenderer.draw(canvas, mDotParams, mDotInfo == null ? -1 : mDotInfo.getNotificationCount());
         }
     }
